@@ -1,4 +1,4 @@
-<p>This is my first client mod! Please report any bugs you encounter in the comments.</p>
+<p>This is my first client mod!</p>
 <h3>
 	Expanded Door Interactions
 </h3>
