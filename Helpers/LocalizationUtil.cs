@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 
-namespace SPTOpenSesame.Helpers
+namespace ExpandedDoorInteractions.Helpers
 {
     public static class LocalizationUtil
     {
@@ -235,7 +235,7 @@ namespace SPTOpenSesame.Helpers
             // Dashes are automatically changed to underscores in resource file names
             string adjustedLocaleName = locale.Replace('-', '_');
 
-            string _namespace = "SPTOpenSesame.Resources";
+            string _namespace = "ExpandedDoorInteractions.Resources";
             string resName = _namespace + "." + adjustedLocaleName;
             Type resType = Type.GetType(resName);
 

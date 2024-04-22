@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT;
 
-namespace SPTOpenSesame.Patches
+namespace ExpandedDoorInteractions.Patches
 {
     public class GameWorldOnDestroyPatch : ModulePatch
     {
@@ -19,7 +19,7 @@ namespace SPTOpenSesame.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            OpenSesamePlugin.PowerSwitch = null;
+            ExpandedDoorInteractionsPlugin.PowerSwitch = null;
         }
     }
 }

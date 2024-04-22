@@ -6,7 +6,7 @@ using EFT.Interactive;
 using EFT;
 using HarmonyLib;
 
-namespace SPTOpenSesame.Helpers
+namespace ExpandedDoorInteractions.Helpers
 {
     public static class InteractionHelpers
     {
@@ -72,9 +72,9 @@ namespace SPTOpenSesame.Helpers
             return true;
         }
 
-        public static void AddDoNothingToActionList(object actionListObject)
+        public static void AddPushToActionList(object actionListObject)
         {
-            if (!OpenSesamePlugin.AddDoNothingAction.Value)
+            if (!ExpandedDoorInteractionsPlugin.AddDoNothingAction.Value)
             {
                 return;
             }
@@ -90,7 +90,7 @@ namespace SPTOpenSesame.Helpers
             AccessTools.Field(actionType, "Name").SetValue(newAction, "Open Further");
 
             InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper();
-            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.doNothingAction));
+            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.pushAction));
 
             AccessTools.Field(actionType, "Disabled").SetValue(newAction, false);
 
@@ -99,7 +99,7 @@ namespace SPTOpenSesame.Helpers
             actionList.Add(newAction);
         }
 
-        public static void AddOpenSesameToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
+        public static void AddPeekToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
         {
             // Don't do anything else unless the door is locked and requires a key
             if ((interactiveObject.DoorState != EDoorState.Shut))
@@ -118,7 +118,7 @@ namespace SPTOpenSesame.Helpers
             AccessTools.Field(actionType, "Name").SetValue(newAction, "Peek");
 
             InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper(interactiveObject, owner);
-            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.unlockAndOpenAction));
+            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(unlockActionWrapper.peekAction));
 
             AccessTools.Field(actionType, "Disabled").SetValue(newAction, !interactiveObject.Operatable);
 
@@ -127,7 +127,7 @@ namespace SPTOpenSesame.Helpers
             actionList.Add(newAction);
         }
 
-        public static void AddTurnOnPowerToActionList(this WorldInteractiveObject interactiveObject, object actionListObject)
+        public static void AddTurnPowerToActionList(this WorldInteractiveObject interactiveObject, object actionListObject)
         {
             if (!HaveTypesBeenFound())
             {
@@ -139,10 +139,10 @@ namespace SPTOpenSesame.Helpers
 
             AccessTools.Field(actionType, "Name").SetValue(newAction, "Nothing");
 
-            InteractiveObjectInteractionWrapper turnOnPowerActionWrapper = new InteractiveObjectInteractionWrapper(OpenSesamePlugin.PowerSwitch);
-            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(turnOnPowerActionWrapper.turnOnAction));
+            InteractiveObjectInteractionWrapper turnOnPowerActionWrapper = new InteractiveObjectInteractionWrapper(ExpandedDoorInteractionsPlugin.PowerSwitch);
+            AccessTools.Field(actionType, "Action").SetValue(newAction, new Action(turnOnPowerActionWrapper.turnAction));
 
-            AccessTools.Field(actionType, "Disabled").SetValue(newAction, !OpenSesamePlugin.PowerSwitch.CanToggle());
+            AccessTools.Field(actionType, "Disabled").SetValue(newAction, !ExpandedDoorInteractionsPlugin.PowerSwitch.CanToggle());
 
             // Add the new action to the context menu for the door
             IList actionList = (IList)AccessTools.Field(resultType, "Actions").GetValue(actionListObject);
@@ -168,7 +168,7 @@ namespace SPTOpenSesame.Helpers
                 owner = _owner;
             }
 
-            internal void doNothingAction()
+            internal void pushAction()
             {
                 if ((interactiveObject.DoorState != EDoorState.Shut))
                 {
@@ -179,7 +179,7 @@ namespace SPTOpenSesame.Helpers
                 owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
             }
 
-            internal void unlockAndOpenAction()
+            internal void peekAction()
             {
                 if (interactiveObject == null)
                 {
@@ -193,7 +193,7 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
                 {
                     LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
                 }
@@ -204,7 +204,7 @@ namespace SPTOpenSesame.Helpers
                     return;
                 }
 
-                if (OpenSesamePlugin.WriteMessagesWhenUnlockingDoors.Value)
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
                 {
                     LoggingUtil.LogInfo("Opening interactive object " + interactiveObject.Id + "...");
                 }
@@ -221,7 +221,7 @@ namespace SPTOpenSesame.Helpers
                 interactiveObject.OpenAngle = openangleold;
             }
 
-            internal void turnOnAction()
+            internal void turnAction()
             {
                 LoggingUtil.LogInfo("This has been disabled");
             }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT.Interactive;
 using EFT;
-using SPTOpenSesame.Helpers;
+using ExpandedDoorInteractions.Helpers;
 
-namespace SPTOpenSesame.Patches
+namespace ExpandedDoorInteractions.Patches
 {
     public class KeycardDoorInteractionPatch : ModulePatch
     {
@@ -27,18 +27,18 @@ namespace SPTOpenSesame.Patches
                 return;
             }
 
-            if (OpenSesamePlugin.WriteMessagesForAllDoors.Value)
+            if (ExpandedDoorInteractionsPlugin.WriteMessagesForAllDoors.Value)
             {
                 LoggingUtil.LogInfo("Checking available actions for door: " + door.Id + "...");
             }
 
-            if (!OpenSesamePlugin.AddNewActions.Value)
+            if (!ExpandedDoorInteractionsPlugin.AddNewActions.Value)
             {
                 return;
             }
 
             // Try to add the "Open Sesame" action to the door's context menu
-            door.AddOpenSesameToActionList(__result, owner);
+            door.AddPeekToActionList(__result, owner);
         }
     }
 }

@@ -8,7 +8,7 @@ using Aki.Reflection.Patching;
 using EFT;
 using EFT.Interactive;
 
-namespace SPTOpenSesame.Patches
+namespace ExpandedDoorInteractions.Patches
 {
     public class OnGameStartedPatch: ModulePatch
     {
@@ -22,12 +22,12 @@ namespace SPTOpenSesame.Patches
         {
             IEnumerable<Switch> powerSwitches = UnityEngine.Object
                 .FindObjectsOfType<Switch>()
-                .Where(s => OpenSesamePlugin.PowerSwitchIds.Contains(s.Id));
+                .Where(s => ExpandedDoorInteractionsPlugin.PowerSwitchIds.Contains(s.Id));
             
             foreach (Switch powerSwitch in powerSwitches)
             {
                 Helpers.LoggingUtil.LogInfo("Found power switch " + powerSwitch.Id);
-                OpenSesamePlugin.PowerSwitch = powerSwitch;
+                ExpandedDoorInteractionsPlugin.PowerSwitch = powerSwitch;
             }
         }
     }

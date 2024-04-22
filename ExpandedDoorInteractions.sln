@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPTOpenSesame", "SPTOpenSesame.csproj", "{B73B1331-A251-4EEA-A8CF-FCEF16ED4C06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExpandedDoorInteractions", "ExpandedDoorInteractions.csproj", "{B73B1331-A251-4EEA-A8CF-FCEF16ED4C06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

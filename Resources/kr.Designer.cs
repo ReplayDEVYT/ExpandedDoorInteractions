@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SPTOpenSesame.Resources {
+namespace ExpandedDoorInteractions.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SPTOpenSesame.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SPTOpenSesame.Resources.kr", typeof(kr).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ExpandedDoorInteractions.Resources.kr", typeof(kr).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

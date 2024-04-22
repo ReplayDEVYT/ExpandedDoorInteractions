@@ -1,4 +1,4 @@
-﻿namespace SPTOpenSesame.Helpers
+﻿namespace ExpandedDoorInteractions.Helpers
 {
     public static class LoggingUtil
     {

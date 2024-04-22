@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using BepInEx;
+using UnityEngine;
 using BepInEx.Configuration;
 
-namespace SPTOpenSesame
+namespace ExpandedDoorInteractions
 {
-    [BepInPlugin("com.DanW.OpenSesame", "DanW-OpenSesame", "2.3.0")]
-    public class OpenSesamePlugin : BaseUnityPlugin
+    [BepInPlugin("com.missing.ExpandedDoorInteractions", "missing-ExpandedDoorInteractions", "2.3.0")]
+    public class ExpandedDoorInteractionsPlugin : BaseUnityPlugin
     {
         public static string[] PowerSwitchIds = new string[]
         {
