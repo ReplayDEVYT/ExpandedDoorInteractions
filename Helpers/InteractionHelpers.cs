@@ -5,6 +5,7 @@ using Comfort.Common;
 using EFT.Interactive;
 using EFT;
 using HarmonyLib;
+using Aki.Reflection.Patching;
 
 namespace ExpandedDoorInteractions.Helpers
 {
@@ -103,6 +104,16 @@ namespace ExpandedDoorInteractions.Helpers
         {
             // Don't do anything else unless the door is locked and requires a key
             if ((interactiveObject.DoorState != EDoorState.Shut))
+            {
+                return;
+            }
+
+            if (interactiveObject is LootableContainer)
+            {
+                return;
+            }
+
+            if (!(interactiveObject is Door))
             {
                 return;
             }
