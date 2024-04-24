@@ -66,6 +66,7 @@
     <Reference Include="UnityEngine">
       <HintPath>D:\EFT SPT\3.8.0\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>D:\EFT SPT\3.8.0\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>

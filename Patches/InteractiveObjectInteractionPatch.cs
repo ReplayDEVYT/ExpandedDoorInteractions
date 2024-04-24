@@ -40,6 +40,8 @@ namespace ExpandedDoorInteractions.Patches
 
             // Try to add the "Open Sesame" action to the door's context menu
             worldInteractiveObject.AddPeekToActionList(__result, owner);
+            worldInteractiveObject.AddOpenQuietlyToActionList(__result, owner);
+            // worldInteractiveObject.AddOpenFurtherToActionList(__result, owner);
         }
     }
 }

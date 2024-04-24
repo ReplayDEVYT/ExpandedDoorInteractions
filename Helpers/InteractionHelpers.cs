@@ -6,6 +6,10 @@ using EFT.Interactive;
 using EFT;
 using HarmonyLib;
 using Aki.Reflection.Patching;
+using System.Collections.Generic;
+using EFT.UI;
+using JetBrains.Annotations;
+using UnityEngine;
 
 namespace ExpandedDoorInteractions.Helpers
 {
@@ -15,6 +19,8 @@ namespace ExpandedDoorInteractions.Helpers
 
         private static Type resultType = null;
         private static Type actionType = null;
+
+        public static float isopenfurtherallowed = 0;
 
         public static void FindTypes()
         {
@@ -100,6 +106,89 @@ namespace ExpandedDoorInteractions.Helpers
             actionList.Add(newAction);
         }
 
+
+        // THIS CODE IS WORK IN PROGRESS
+        public static void AddOpenFurtherToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
+        {
+            // Don't do anything else unless the door is locked and requires a key
+            if ((interactiveObject.DoorState != EDoorState.Open))
+            {
+                return;
+            }
+
+            if (interactiveObject is LootableContainer)
+            {
+                return;
+            }
+
+            if ((interactiveObject is Door))
+            {
+                return;
+            }
+
+            if (isopenfurtherallowed != 1)
+            {
+                return;
+            }
+
+            if (!HaveTypesBeenFound())
+            {
+                throw new TypeLoadException("Types have not been loaded");
+            }
+
+            // Create a new action to unlock the door
+            var newActionOpenFurther = Activator.CreateInstance(actionType);
+
+            AccessTools.Field(actionType, "Name").SetValue(newActionOpenFurther, "Open Further");
+
+            InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper(interactiveObject, owner);
+            AccessTools.Field(actionType, "Action").SetValue(newActionOpenFurther, new Action(unlockActionWrapper.OpenFurtherAction));
+
+            AccessTools.Field(actionType, "Disabled").SetValue(newActionOpenFurther, !interactiveObject.Operatable);
+
+            // Add the new action to the context menu for the door
+            IList actionList = (IList)AccessTools.Field(resultType, "Actions").GetValue(actionListObject);
+            actionList.Add(newActionOpenFurther);
+        }
+
+        public static void AddOpenQuietlyToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
+        {
+            // Don't do anything else unless the door is locked and requires a key
+            if ((interactiveObject.DoorState != EDoorState.Shut))
+            {
+                return;
+            }
+
+            if (interactiveObject is LootableContainer)
+            {
+                return;
+            }
+
+            if (!(interactiveObject is Door))
+            {
+                return;
+            }
+
+            if (!HaveTypesBeenFound())
+            {
+                throw new TypeLoadException("Types have not been loaded");
+            }
+
+            // Create a new action to open the door quietly
+            var newActionOpenQuietly = Activator.CreateInstance(actionType);
+
+            AccessTools.Field(actionType, "Name").SetValue(newActionOpenQuietly, "Stealth Open");
+
+            InteractiveObjectInteractionWrapper unlockActionWrapper = new InteractiveObjectInteractionWrapper(interactiveObject, owner);
+            AccessTools.Field(actionType, "Action").SetValue(newActionOpenQuietly, new Action(unlockActionWrapper.OpenQuietlyAction));
+
+            AccessTools.Field(actionType, "Disabled").SetValue(newActionOpenQuietly, !interactiveObject.Operatable);
+
+            // Add the new action to the context menu for the door
+            IList actionList = (IList)AccessTools.Field(resultType, "Actions").GetValue(actionListObject);
+            actionList.Add(newActionOpenQuietly);
+        }
+
         public static void AddPeekToActionList(this WorldInteractiveObject interactiveObject, object actionListObject, GamePlayerOwner owner)
         {
             // Don't do anything else unless the door is locked and requires a key
@@ -114,6 +203,11 @@ namespace ExpandedDoorInteractions.Helpers
             }
 
             if (!(interactiveObject is Door))
+            {
+                return;
+            }
+
+            if (interactiveObject is Trunk)
             {
                 return;
             }
@@ -189,7 +283,6 @@ namespace ExpandedDoorInteractions.Helpers
                 var gstruct = Door.Interact(this.owner.Player, EInteractionType.Open);
                 owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
             }
-
             internal void peekAction()
             {
                 if (interactiveObject == null)
@@ -227,9 +320,98 @@ namespace ExpandedDoorInteractions.Helpers
                 var openanglepeek = interactiveObject.OpenAngle / 3;
                 var gstruct = Door.Interact(this.owner.Player, EInteractionType.Open);
 
+
                 interactiveObject.OpenAngle = openanglepeek;
                 owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
                 interactiveObject.OpenAngle = openangleold;
+                isopenfurtherallowed = 1;
+            }
+
+            internal void OpenFurtherAction()
+            {
+                if (interactiveObject == null)
+                {
+                    LoggingUtil.LogError("Cannot unlock and open a null object");
+                    return;
+                }
+
+                if (owner == null)
+                {
+                    LoggingUtil.LogError("A GamePlayerOwner must be defined to unlock and open object " + interactiveObject.Id);
+                    return;
+                }
+
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
+                {
+                    LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
+                }
+
+                // Do not open lootable containers like safes, cash registers, etc.
+                if ((interactiveObject as LootableContainer) != null)
+                {
+                    return;
+                }
+
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
+                {
+                    LoggingUtil.LogInfo("Opening interactive object " + interactiveObject.Id + "...");
+                }
+
+                owner.Player.MovementContext.ResetCanUsePropState();
+
+                // Open the door
+                var gstruct = Door.Interact(this.owner.Player, EInteractionType.Open);
+                owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
+                isopenfurtherallowed = 0;
+            }
+
+            internal void OpenQuietlyAction()
+            {
+                if (interactiveObject == null)
+                {
+                    LoggingUtil.LogError("Cannot unlock and open a null object");
+                    return;
+                }
+
+                if (owner == null)
+                {
+                    LoggingUtil.LogError("A GamePlayerOwner must be defined to unlock and open object " + interactiveObject.Id);
+                    return;
+                }
+
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
+                {
+                    LoggingUtil.LogInfo("Unlocking interactive object " + interactiveObject.Id + " which requires key " + interactiveObject.KeyId + "...");
+                }
+
+                // Do not open lootable containers like safes, cash registers, etc.
+                if ((interactiveObject as LootableContainer) != null)
+                {
+                    return;
+                }
+
+                if (ExpandedDoorInteractionsPlugin.WriteMessagesWhenUnlockingDoors.Value)
+                {
+                    LoggingUtil.LogInfo("Opening interactive object " + interactiveObject.Id + "...");
+                }
+
+                owner.Player.MovementContext.ResetCanUsePropState();
+
+                // Open the door
+                var olddooropensound = interactiveObject.OpenSound;
+                var olddooropengraph = interactiveObject.ProgressCurve;
+                var olddoorangle = interactiveObject.OpenAngle;
+                var newdoorangle = interactiveObject.OpenAngle / 1.5;
+                var oldpushid = interactiveObject.PushID;
+
+                interactiveObject.OpenSound = null;
+                interactiveObject.OpenAngle = (float)newdoorangle;
+                interactiveObject.PushID = 2;
+                var gstruct = Door.Interact(this.owner.Player, EInteractionType.Open);
+                owner.Player.CurrentManagedState.ExecuteDoorInteraction(interactiveObject, gstruct.Value, null, owner.Player);
+                interactiveObject.OpenAngle = olddoorangle;
+                interactiveObject.OpenSound = olddooropensound;
+                interactiveObject.PushID = oldpushid;
             }
 
             internal void turnAction()
